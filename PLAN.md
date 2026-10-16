@@ -2,9 +2,9 @@
 
 Only decisions we have agreed on go in this file.
 
-**Status (2026-10-14):** goal, ground rules, research question and first specifications agreed.
-Next up: your predictions for Parts A and B (Rule 6), then the remaining specifications, then
-the steps and the plan.
+**Status (2026-10-15):** goal, ground rules, research question, predictions, and the data, model
+and pruning specifications agreed. Next up: the remaining specifications (sparsity levels,
+fine-tuning after pruning, layers to skip, ambiguous/clear threshold), then the steps and the plan.
 
 ## Goal
 *Agreed 2026-10-14*
@@ -73,6 +73,25 @@ images that humans find hard?
 clear is drawn; whether "more" is measured in percentage points or relative to starting accuracy;
 whether the comparison is ambiguous vs clear or ambiguous vs all images.
 
+## Predictions
+*Written 2026-10-15, before any experiment (Rule 6). In my own words:*
+
+> I believe that CNN's would have double the loss on hard problems, while ViT's 1.5 times the
+> loss. But I also believe that ViT's would have an even lower relative effect when we use random
+> pruning, and random pruning will be worse per percentage of weights active but at the same time
+> the relative difference from hard and not as hard problems won't be as big for both.
+
+*Measurable version, agreed 2026-10-15.* "Ratio" means (accuracy drop on ambiguous images) ÷
+(accuracy drop on clear images), with drops in **percentage points**, compared at a matched overall
+accuracy drop.
+
+| # | Prediction | Measured as |
+|---|---|---|
+| 1 | CNN, magnitude pruning: hard images lose 2× as much | ResNet-18 ratio ≈ 2 |
+| 2 | ViT, magnitude pruning: 1.5× | DeiT-Tiny ratio ≈ 1.5 |
+| 3 | Random pruning is worse per weight kept | at the same sparsity, both models lose more overall accuracy with random than with magnitude pruning |
+| 4 | Random pruning narrows the gap for both, and the ViT's stays smaller | with random pruning both ratios are closer to 1 than with magnitude pruning, and the ViT's ratio is still below the CNN's |
+
 ## Specifications
 
 ### Data
@@ -81,6 +100,16 @@ whether the comparison is ambiguous vs clear or ambiguous vs all images.
 ### Models
 - **Decided 2026-10-14:** ResNet-18 (CNN) vs DeiT-Tiny (ViT), both fine-tuned from ImageNet-1k
   pretrained weights.
+
+### Pruning
+- **Decided 2026-10-15:** the main method is global unstructured magnitude pruning (the smallest-magnitude
+  weights across the whole network are set to zero), applied to both models. It is the same family
+  as Hooker et al. and means the same thing for conv and linear layers.
+- **Decided 2026-10-15:** random pruning (the same fraction of weights, chosen at random) is the control.
+- **Decided 2026-10-15:** the CNN and the ViT are compared at **matched overall accuracy loss**, not at matched
+  sparsity. For each model we sweep sparsity and plot the ambiguous-vs-clear gap against the overall
+  accuracy drop. This keeps "the method suits one architecture better" from biasing the comparison.
+- *Optional, only if time allows:* repeat with a structured method (pruning whole heads or channels).
 
 ### Tools
 - **Decided 2026-10-14:** notebooks run in VS Code (Jupyter extension), with an AI assistant in the sidebar used under Rule 1.
