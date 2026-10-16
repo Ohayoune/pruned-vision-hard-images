@@ -3,9 +3,9 @@
 Only decisions we have agreed on go in this file.
 
 **Status (2026-10-15):** goal, ground rules, research question, predictions, and the data, model,
-pruning (incl. layers to skip), fine-tuning, sparsity/runs and ambiguous/clear threshold
-specifications agreed. Next up, before implementation: the validation split (Rule 7), the
-base-model training recipe (image size, epochs, learning rate), then the steps and the plan.
+pruning (incl. layers to skip), fine-tuning, sparsity/runs, ambiguous/clear threshold, validation
+split and training recipe specifications agreed. Next up, before implementation: the steps, then
+the plan.
 
 ## Goal
 *Agreed 2026-10-14*
@@ -116,6 +116,15 @@ accuracy drop.
     accuracy figure, and avoids a group made mostly of mislabeled images the unpruned model already
     gets wrong. Including mildly ambiguous images can only shrink the gap, so the choice is
     conservative.
+- **Decided 2026-10-15:** validation split (Rule 7): 5,000 of the 50,000 training images, 500 per
+  class, drawn with a fixed seed and saved as an index file so every run uses the same split. All
+  models train on the other 45,000. Validation is used to choose the base-model recipe and to check
+  that each pruned model recovers after its fine-tune. The test set and CIFAR-10H are loaded only
+  for the final evaluation.
+  - Why: CIFAR-10H covers only the test set, so validation can't be split into ambiguous and clear;
+    it is for training choices only, and the ambiguous-vs-clear gap is measured once, on test.
+    Retraining on all 50,000 afterwards was skipped: one more run and a harder-to-follow setup
+    for about 1% more data.
 
 ### Models
 - **Decided 2026-10-14:** ResNet-18 (CNN) vs DeiT-Tiny (ViT), both fine-tuned from ImageNet-1k
@@ -144,6 +153,25 @@ accuracy drop.
   pruning run.
 - **Decided 2026-10-15:** the unpruned (0%) model also gets the same 1 extra epoch, so the extra
   training is not mistaken for an effect of pruning.
+
+### Training recipe
+- **Decided 2026-10-15:** one recipe for both models, so the only difference between them is the
+  architecture. The optimizer and weight decay shape the spread of weight sizes, which is exactly
+  what magnitude pruning acts on.
+  - **Images:** 32×32 upscaled to 224×224, the size both models were pretrained at (at 32×32 the
+    ViT would see only 4 patches). Normalized with ImageNet mean and std.
+  - **Augmentation:** random crop (4-pixel padding) and horizontal flip at 32×32, before the
+    upscale.
+  - **Optimizer:** AdamW, peak learning rate 1e-4, weight decay 0.05, batch size 128.
+  - **Schedule:** short linear warm-up, then cosine decay to 0.
+  - **Base model:** 3 epochs on the 45,000 training images.
+  - **Fine-tune after pruning:** 1 epoch, same optimizer and peak learning rate, with the warm-up
+    and cosine decay fitted into that epoch.
+- **Decided 2026-10-15:** no hyperparameter search. Validation accuracy is checked after every
+  base-model epoch. Only if a model ends below ~94%, or is still clearly improving at epoch 3, is
+  one thing changed (learning rate or epochs), judged on validation only.
+- **Decided 2026-10-15:** if the first timing run (Rule 3) shows the runs won't fit, the image size
+  drops to 128×128 for both models.
 
 ### Sparsity levels and runs
 - **Decided 2026-10-15:** 0, 30, 50, 70, 90, 95% of weights pruned.
