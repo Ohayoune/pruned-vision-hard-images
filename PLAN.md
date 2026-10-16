@@ -2,9 +2,10 @@
 
 Only decisions we have agreed on go in this file.
 
-**Status (2026-10-15):** goal, ground rules, research question, predictions, and the data, model
-and pruning specifications agreed. Next up: the remaining specifications (sparsity levels,
-fine-tuning after pruning, layers to skip, ambiguous/clear threshold), then the steps and the plan.
+**Status (2026-10-15):** goal, ground rules, research question, predictions, and the data, model,
+pruning (incl. layers to skip), fine-tuning, sparsity/runs and ambiguous/clear threshold
+specifications agreed. Next up, before implementation: the validation split (Rule 7), the
+base-model training recipe (image size, epochs, learning rate), then the steps and the plan.
 
 ## Goal
 *Agreed 2026-10-14*
@@ -42,6 +43,8 @@ spread over a few days. The computer can also run overnight when that helps.
    the test set.
 8. **Compare against a baseline, and repeat the main result** (for example with 3 random seeds)
    before believing it.
+   *Amended 2026-10-15:* for time, each condition runs once (one seed). The write-up lists this
+   as a limitation.
 9. **End with a one-page write-up** covering the question, the method, one or two key figures,
    the result and its limitations.
 
@@ -57,6 +60,13 @@ This replaces the earlier idea of artificial image degradations.*
 
 **In one sentence:** when pruned, do ViTs, like CNNs, lose accuracy disproportionately on the
 images that humans find hard?
+
+**Contribution** *(added 2026-10-15)***:** Hooker et al. defined hard images by pruning itself
+(images whose prediction changes when the model is pruned) and asked humans only afterwards. We
+choose the hard images from human judgements (CIFAR-10H), before and independently of any model,
+and then test whether pruning hurts them more, in a CNN and in a ViT. *Limitation to keep in mind:*
+human-ambiguous images are also harder for the unpruned model, so its starting accuracy on them is
+already lower.
 
 - **Main question:** Does pruning hurt a CNN and a ViT differently on images that humans find
   ambiguous?
@@ -96,6 +106,16 @@ accuracy drop.
 
 ### Data
 - **Decided 2026-10-14:** CIFAR-10. "Unclear" images are defined by human disagreement, using CIFAR-10H (about 50 human labels per CIFAR-10 test image).
+- **Decided 2026-10-15:** an image's *human agreement* is the share of CIFAR-10H annotators who
+  chose its CIFAR-10 label (using the authors' cleaned `cifar10h-counts.npy`, which leaves out 16
+  inattentive annotators). **Ambiguous** = every test image with agreement ≤ 86.8%: 1,011 images,
+  the bottom ~10%, with ties included rather than broken at random. **Clear** = the other 8,989.
+  - Why: the agreement distribution has no natural break (44% of images have 100% agreement; 12%
+    are below 90%, 6% below 80%, 1.2% below 50%), so the cut is a convention fixed before any
+    model is run. The bottom 10% already contains every strongly ambiguous image, gives a stable
+    accuracy figure, and avoids a group made mostly of mislabeled images the unpruned model already
+    gets wrong. Including mildly ambiguous images can only shrink the gap, so the choice is
+    conservative.
 
 ### Models
 - **Decided 2026-10-14:** ResNet-18 (CNN) vs DeiT-Tiny (ViT), both fine-tuned from ImageNet-1k
@@ -109,7 +129,27 @@ accuracy drop.
 - **Decided 2026-10-15:** the CNN and the ViT are compared at **matched overall accuracy loss**, not at matched
   sparsity. For each model we sweep sparsity and plot the ambiguous-vs-clear gap against the overall
   accuracy drop. This keeps "the method suits one architecture better" from biasing the comparison.
+- **Decided 2026-10-15:** in both models only conv and linear weights are pruned. Biases,
+  normalization layers (BatchNorm, LayerNorm), the first layer (ResNet's first conv, the ViT's patch
+  embedding) and the last layer (the 10-class output) are left alone, as is common practice.
 - *Optional, only if time allows:* repeat with a structured method (pruning whole heads or channels).
+
+### Fine-tuning after pruning
+- **Decided 2026-10-15:** each pruned model is fine-tuned for 1 epoch on the training set, with the
+  pruned weights held at zero. It is tested twice: right after pruning (the damage pruning does on
+  its own) and after the fine-tune (what it still gets wrong after recovering). The after-fine-tune
+  test is the main result, matching Hooker et al.
+- **Decided 2026-10-15:** before any pruning, each pretrained model gets a new 10-class output layer
+  and is fine-tuned on CIFAR-10 for a few epochs. This base model is the starting point for every
+  pruning run.
+- **Decided 2026-10-15:** the unpruned (0%) model also gets the same 1 extra epoch, so the extra
+  training is not mistaken for an effect of pruning.
+
+### Sparsity levels and runs
+- **Decided 2026-10-15:** 0, 30, 50, 70, 90, 95% of weights pruned.
+- **Decided 2026-10-15:** one seed per condition (see the amendment to Rule 8).
+- That makes 2 base-model runs plus 22 short runs (2 models × 2 methods × 5 pruned levels, plus
+  the 2 unpruned models), estimated at 2–4 hours.
 
 ### Tools
 - **Decided 2026-10-14:** notebooks run in VS Code (Jupyter extension), with an AI assistant in the sidebar used under Rule 1.
