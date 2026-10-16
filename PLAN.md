@@ -4,8 +4,9 @@ Only decisions we have agreed on go in this file.
 
 **Status (2026-10-15):** goal, ground rules, research question, predictions, and the data, model,
 pruning (incl. layers to skip), fine-tuning, sparsity/runs, ambiguous/clear threshold, validation
-split and training recipe specifications agreed. Next up, before implementation: the steps, then
-the plan.
+split and training recipe specifications agreed. Experiment description (for the paper) recorded,
+and percentage-point drops confirmed. Write-up changed to a 4-page workshop-style paper (Rule 9).
+New goals added. Next up: the steps, then the plan.
 
 ## Goal
 *Agreed 2026-10-14*
@@ -13,6 +14,13 @@ the plan.
 Learn to implement machine learning by doing it, learn how Jupyter notebooks work, and use this
 project as a stepping stone into research like the work done at the UW Allen School. By the end,
 I can explain what is happening underneath every part of it.
+
+*Added 2026-10-15, in my own words:*
+- Have practice doing/making a "real" research paper.
+- Learn how to use Jupyter notebooks and become more proficient using PyTorch.
+- Have a tangible result I can show people.
+- Figure out what next steps of research I can pursue/take.
+- Be able to explain every decision made in the research paper.
 
 **Context:** my starting point is basic neural networks. I have about 10 hours of my own time,
 spread over a few days. The computer can also run overnight when that helps.
@@ -47,6 +55,12 @@ spread over a few days. The computer can also run overnight when that helps.
    as a limitation.
 9. **End with a one-page write-up** covering the question, the method, one or two key figures,
    the result and its limitations.
+   *Amended 2026-10-15:* instead, a **4-page workshop-style paper** (plus references) with the
+   standard sections: abstract; introduction and related work; method; results (one or two
+   figures, each prediction checked); limitations and next steps. Why: one page has no room for the
+   method, which is where every decision gets explained; a full 8+ page paper would need more seeds,
+   datasets and ablations than this project has. Workshops at ML conferences accept papers of this
+   length for preliminary results like these.
 
 **Working together**
 
@@ -83,6 +97,24 @@ already lower.
 clear is drawn; whether "more" is measured in percentage points or relative to starting accuracy;
 whether the comparison is ambiguous vs clear or ambiguous vs all images.
 
+## Experiment description
+*Written by me 2026-10-15, corrected where necessary. This is the text used in the final paper.*
+
+> The experiment compares two machine learning model types, ViTs and CNNs, and measures whether
+> the distribution of their failure rates is the same on harder images as on easier images.
+>
+> The experiment does this by quickly fitting available vision models to the data, and then
+> progressively pruning the models with two different pruning methods, magnitude pruning and random
+> pruning. Afterwards, we will measure whether degradation, in percentage points of accuracy, is the
+> same on standard and hard images, and compare the two models.
+>
+> The null hypothesis is that models degrade uniformly: standard and hard images lose the same
+> number of percentage points of accuracy. The alternative hypothesis is that both types of models
+> degrade more on harder images after pruning.
+>
+> Moreover, we are also looking to see if one type of architecture has more uniform degradation
+> than the other.
+
 ## Predictions
 *Written 2026-10-15, before any experiment (Rule 6). In my own words:*
 
@@ -94,6 +126,14 @@ whether the comparison is ambiguous vs clear or ambiguous vs all images.
 *Measurable version, agreed 2026-10-15.* "Ratio" means (accuracy drop on ambiguous images) ÷
 (accuracy drop on clear images), with drops in **percentage points**, compared at a matched overall
 accuracy drop.
+
+*Confirmed 2026-10-15:* drops are measured in percentage points, not relative to starting accuracy.
+- Why: ambiguous images start with lower accuracy. Dividing a drop by starting accuracy would make
+  their drop look bigger and tilt the result toward the predictions, and dividing by starting error
+  would tilt it the other way. Percentage points divide by neither: they count how many images out
+  of 100 each group lost.
+- Known weakness: accuracy can't fall below chance (10%), so at the heaviest pruning levels
+  ambiguous images have less room to fall. This shows up on the plot.
 
 | # | Prediction | Measured as |
 |---|---|---|
