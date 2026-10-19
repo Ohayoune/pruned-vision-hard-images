@@ -6,7 +6,8 @@ Only decisions we have agreed on go in this file.
 pruning (incl. layers to skip), fine-tuning, sparsity/runs, ambiguous/clear threshold, validation
 split and training recipe specifications agreed. Experiment description (for the paper) recorded,
 and percentage-point drops confirmed. Write-up changed to a 4-page workshop-style paper (Rule 9).
-New goals added. Next up: the steps, then the plan.
+New goals added. First steps agreed (ViT first, together). Next up: notebook 01, starting with
+the setup code.
 
 ## Goal
 *Agreed 2026-10-14*
@@ -224,6 +225,12 @@ accuracy drop.
 - **Decided 2026-10-14:** the project lives in this repo (`image-classification`). The Fashion-MNIST warm-up moved to `~/Developer/fashion-mnist`.
 
 ## Steps
+*Decided 2026-10-15. Steps after these are decided when we get there.*
+
+1. **ViT, together.** Load pretrained DeiT-Tiny, train it into the base model, check it on the
+   validation split (Rule 7: the test set stays locked), and prune it.
+2. **Decide what to do with the CNN.**
+3. **The rest:** The assistant does it and you double-check it.
 
 ## Plan
 
