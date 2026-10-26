@@ -2,12 +2,12 @@
 
 Only decisions we have agreed on go in this file.
 
-**Status (2026-10-15):** goal, ground rules, research question, predictions, and the data, model,
-pruning (incl. layers to skip), fine-tuning, sparsity/runs, ambiguous/clear threshold, validation
-split and training recipe specifications agreed. Experiment description (for the paper) recorded,
-and percentage-point drops confirmed. Write-up changed to a 4-page workshop-style paper (Rule 9).
-New goals added. First steps agreed (ViT first, together). Next up: notebook 01, starting with
-the setup code.
+**Status (2026-10-25): project complete.** You asked the assistant to "ignore previous limits/learning
+goals" and finish the whole project, so the assistant did the remaining steps alone (decisions in
+*Decided by the assistant, 2026-10-25* below): notebooks `01_vit.ipynb`, `02_cnn.ipynb` and
+`03_test.ipynb` all run top to bottom; results are in `results/`; the 4-page paper is
+`paper/paper.pdf`. Next up: read the paper and notebooks, put your name in `paper/paper.typ`,
+rewrite each notebook's "What happened" in your own words, then the next project.
 
 ## Goal
 *Agreed 2026-10-14*
@@ -143,6 +143,12 @@ accuracy drop.
 | 3 | Random pruning is worse per weight kept | at the same sparsity, both models lose more overall accuracy with random than with magnitude pruning |
 | 4 | Random pruning narrows the gap for both, and the ViT's stays smaller | with random pruning both ratios are closer to 1 than with magnitude pruning, and the ViT's ratio is still below the CNN's |
 
+*Checked 2026-10-25 (notebook 03), after the fine-tune at the matched overall drop D\* = 12.1
+points:* ResNet-18 ratio 1.67 [1.38, 1.97] (#1 not supported), DeiT-Tiny 1.90 [1.61, 2.21] (#2 not
+supported: larger, not smaller), random pruning worse at every sparsity (#3 supported), random
+ratios 1.57 and 1.54 vs magnitude 1.67 and 1.90 (#4 supported by the pre-set rule, but the ViT–CNN
+part is a tie). Uniform degradation is rejected for both models and both methods.
+
 ## Specifications
 
 ### Data
@@ -231,6 +237,31 @@ accuracy drop.
    validation split (Rule 7: the test set stays locked), and prune it.
 2. **Decide what to do with the CNN.**
 3. **The rest:** The assistant does it and you double-check it.
+
+## Decided by the assistant, 2026-10-25
+*At your request ("Continue and complete the whole project"); not agreed step by step like the rest.*
+
+- **The CNN (Step 2):** same recipe, sparsities and notebook structure as the ViT (`02_cnn.ipynb`),
+  so the architecture is the only difference. ResNet-18 weights come from timm's `resnet18.tv_in1k`,
+  torchvision's original ImageNet checkpoint, because torchvision's own download failed on an SSL
+  certificate error. Skipped layers: `conv1` and `fc`.
+- **Shared code:** the prune-and-fine-tune loop and its plot moved to `sweep.py`, model creation to
+  `models.py`, test-set and CIFAR-10H loading to `data.py`, so notebooks 01 and 02 run the same code.
+- **Base models:** both cleared the 94% bar with less than half a point gained in epoch 3
+  (DeiT-Tiny 96.5%, ResNet-18 95.0% validation), so the recipe was not changed.
+- **Analysis rules** (fixed in `03_test.ipynb` before it first ran on the real models): ratios
+  only where the clear-image drop is ≥ 1 point; 95% intervals from a bootstrap over test images
+  (2,000 resamples, within each group, the same for every model); D\* = the largest overall drop all
+  four model–method curves reach, with linear interpolation between sparsity levels; verdicts:
+  #1–2 supported if the predicted ratio lies in the interval, #3 if every random-minus-magnitude
+  difference is above 0, #4 on point estimates.
+- **Added after seeing the results** (labelled as such in notebook 03 and the paper): the
+  chance-floor lines in Figure 2, and the bonus analysis repeated at matched overall drop, because at
+  95% DeiT-Tiny has collapsed.
+- **Robustness checks** (written with the analysis rules): a class-matched gap and the loss rate
+  among images the reference gets right.
+- **Paper:** written in Typst (no LaTeX on this Mac); `paper/make_table.py` builds Table 1 from
+  `results/drops.csv`. Build command at the top of `paper/paper.typ`.
 
 ## Plan
 

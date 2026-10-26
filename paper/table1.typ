@@ -1,0 +1,15 @@
+#table(
+  columns: (auto,) + (1fr,) * 8,
+  align: (left,) + (right,) * 8,
+  table.hline(),
+  table.header([], table.cell(colspan: 2, align: center)[ResNet-18, magnitude], table.cell(colspan: 2, align: center)[ResNet-18, random], table.cell(colspan: 2, align: center)[DeiT-Tiny, magnitude], table.cell(colspan: 2, align: center)[DeiT-Tiny, random],
+    [sparsity], [acc.], [gap], [acc.], [gap], [acc.], [gap], [acc.], [gap]),
+  table.hline(stroke: 0.5pt),
+  [0%], [95.0], [—], [95.0], [—], [96.4], [—], [96.4], [—],
+  [30%], [94.9], [−0.2], [93.0], [*+2.7*], [96.3], [+1.3], [77.3], [*+9.7*],
+  [50%], [94.9], [+0.8], [88.5], [*+6.9*], [94.6], [*+4.1*], [52.5], [*+4.3*],
+  [70%], [94.5], [+1.3], [67.4], [*+5.7*], [85.1], [*+10.2*], [36.1], [*−8.1*],
+  [90%], [91.2], [*+6.6*], [47.2], [−2.3], [38.3], [*−4.2*], [26.9], [*−11.2*],
+  [95%], [82.8], [*+7.6*], [40.7], [*−9.0*], [32.0], [*−8.6*], [22.4], [*−10.2*],
+  table.hline(),
+)
