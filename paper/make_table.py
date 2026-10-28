@@ -35,3 +35,33 @@ for s in [0.0, 0.3, 0.5, 0.7, 0.9, 0.95]:
 lines += ["  table.hline(),", ")"]
 (ROOT / "paper" / "table1.typ").write_text("\n".join(lines) + "\n")
 print("wrote paper/table1.typ")
+
+# Two-page paper (paper_short.typ): each curve also gets its accuracy and gap right after pruning,
+# before the fine-tune, which the full paper shows only in Figure 2's right panel.
+pruned = {(r["model"], r["method"], float(r["sparsity"])): r
+          for r in csv.DictReader(open(ROOT / "results" / "drops.csv")) if r["when"] == "pruned"}
+
+
+def cell_pruned(model, method, s):
+    r = pruned[(model, "none" if s == 0 else method, s)]
+    acc = f"{float(r['acc_all']):.1f}"
+    if s == 0:
+        return [acc, "—"]
+    gap, lo, hi = (float(r[k]) for k in ("gap", "gap_lo", "gap_hi"))
+    text = f"{gap:+.1f}".replace("-", "−")
+    return [acc, f"*{text}*" if lo > 0 or hi < 0 else text]
+
+
+lines = ["#table(", "  columns: (auto,) + (1fr,) * 16,", "  align: (left,) + (right,) * 16,",
+         "  table.hline(),",
+         "  table.header([], " + ", ".join(f"table.cell(colspan: 4, align: center)[{m}, {meth}]" for m, meth in curves) + ",",
+         "    [sparsity], " + ", ".join("[acc.], [gap], [acc.#sub[0]], [gap#sub[0]]" for _ in curves) + "),",
+         "  table.hline(stroke: 0.5pt),"]
+for s in [0.0, 0.3, 0.5, 0.7, 0.9, 0.95]:
+    cells = [f"[{s:.0%}]"]
+    for m, meth in curves:
+        cells += [f"[{c}]" for c in cell(m, meth, s) + cell_pruned(m, meth, s)]
+    lines.append("  " + ", ".join(cells) + ",")
+lines += ["  table.hline(),", ")"]
+(ROOT / "paper" / "table1_short.typ").write_text("\n".join(lines) + "\n")
+print("wrote paper/table1_short.typ")

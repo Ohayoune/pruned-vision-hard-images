@@ -83,7 +83,7 @@ concentrate on particular images and groups. Example difficulty is usually measu
 a validation split, used only to check training, and train on the remaining 45,000. CIFAR-10H
 @peterson2019human gives 47--63 human labels per test image (median 51; we use the authors'
 cleaned counts). An image's _human agreement_ is the share of annotators who chose its CIFAR-10
-label. We call an image *ambiguous* if its agreement is at most 86.8%: the bottom ~10% of the test
+label. We call an image *ambiguous* if its agreement is at most 86.8%: the bottom ≈10% of the test
 set, with ties kept, giving 1,011 ambiguous and 8,989 *clear* images (@fig-data). The
 distribution has no natural break (44% of images have 100% agreement), so the cut is a convention,
 fixed before any model was run. The test set and CIFAR-10H were opened once, for the final
@@ -157,7 +157,7 @@ at about 70%. At $D^*$, ResNet-18 loses 19.0 [15.9, 22.1] points on ambiguous im
 [10.6, 12.1] on clear ones, a ratio of 1.67 [1.38, 1.97]. DeiT-Tiny loses 21.1 [18.1, 24.2] and
 11.1 [10.4, 11.8], a ratio of 1.90 [1.61, 2.21]. The null hypothesis of uniform degradation is
 rejected for all four model--method curves (gaps of 6.2--10.0 points, every interval above 0). The
-architectures do not differ detectably: ResNet-18's ratio minus DeiT-Tiny's is −0.22 [−0.62, 0.14].
+architectures do not differ detectably: ResNet-18’s ratio minus DeiT-Tiny's is −0.22 [−0.62, 0.14].
 As the models approach chance the curves turn down and the gap becomes negative, following the
 chance floor (thin lines in @fig-gap). Ambiguous images start lower and have less room to fall, as
 anticipated in our plan.
