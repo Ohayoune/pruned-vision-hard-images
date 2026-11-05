@@ -2,12 +2,9 @@
 
 Only decisions we have agreed on go in this file.
 
-**Status (2026-10-25): project complete.** You asked the assistant to "ignore previous limits/learning
-goals" and finish the whole project, so the assistant did the remaining steps alone (decisions in
-*Decided by the assistant, 2026-10-25* below): notebooks `01_vit.ipynb`, `02_cnn.ipynb` and
-`03_test.ipynb` all run top to bottom; results are in `results/`; the 4-page paper is
-`paper/paper.pdf`. Next up: read the paper and notebooks, put your name in `paper/paper.typ`,
-rewrite each notebook's "What happened" in your own words, then the next project.
+**Status (2026-10-25): complete.** Results are in `results/` and the paper is `paper/paper.pdf`
+(two pages; the plan below called for four). The final steps were done by an AI assistant;
+its decisions are recorded under *Decided by the assistant, 2026-10-25*.
 
 ## Goal
 *Agreed 2026-10-14*

@@ -31,11 +31,23 @@ The next step is to check this phenomenon on different classes of ML models, suc
 | `results/` | Per-image test predictions, `drops.csv`, `summary.json`, figures |
 | `paper/` | Typst source, bibliography, and the table and figure generators |
 | `PLAN.md` | Research plan, decisions and predictions, written before the experiments |
+| `requirements.txt` | The package versions used |
 
-**Reproduce** (Apple-silicon Mac, about 2 hours of training): put CIFAR-10 in `data/` and
-CIFAR-10H's `cifar10h-counts.npy` in `data/cifar10h/`, then run notebooks 01, 02 and 03 in order
-(each skips work already saved in `checkpoints/`). Build the paper and its page images (needs
-`pip install typst`) with:
+**Reproduce** (Apple-silicon Mac, Python 3.14, about 2 hours of training). Install the packages:
+
+```bash
+python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
+```
+
+Get the data:
+
+- CIFAR-10 goes in `data/`. torchvision can download it:
+  `.venv/bin/python -c "import torchvision; torchvision.datasets.CIFAR10('data', download=True)"`
+- CIFAR-10H's `cifar10h-counts.npy`, from [github.com/jcpeterson/cifar-10h](https://github.com/jcpeterson/cifar-10h)
+  (folder `data/`), goes in `data/cifar10h/`.
+
+Then run notebooks 01, 02 and 03 in order (each skips work already saved in `checkpoints/`). Build
+the paper and its page images with:
 
 ```bash
 .venv/bin/python paper/make_table.py && .venv/bin/python paper/make_figures.py && .venv/bin/python -c "import typst; typst.compile('paper/paper.typ', output='paper/paper.pdf', root='.'); typst.compile('paper/paper.typ', output='paper/page-{p}.png', root='.', format='png', ppi=150)"
