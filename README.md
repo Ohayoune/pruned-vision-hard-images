@@ -8,9 +8,9 @@ overall accuracy drop of 12 points, the CNN lost 1.7× and the ViT 1.9× as much
 images as on the easy ones.
 
 This study was a continuation of a study by Hooker et al. (2019), which focused only on CNNs. We
-found that this effect also transfers to ViTs, in fact even being more prominent, although only one
-model of each kind was checked and the difference between them was within the margin of error, so
-we don't have enough information to say whether ViTs suffer worse on hard problems while pruned.
+found that this effect also transfers to ViTs. The ViT's number was even higher, but only one model
+of each kind was checked and the difference between them was within the margin of error, so we
+don't have enough information to say whether ViTs suffer worse on hard problems while pruned.
 The next step is to check this phenomenon on different classes of ML models, such as LLMs.
 
 ## Paper
