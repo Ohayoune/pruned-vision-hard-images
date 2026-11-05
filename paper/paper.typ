@@ -16,8 +16,8 @@
 #show figure.caption: set par(justify: true)
 #show figure: set block(above: 0.6em, below: 0.6em)
 #show figure.where(kind: table): set figure.caption(position: top)
-#set table(stroke: none, inset: (x: 2.6pt, y: 1.4pt))
-#show table: set text(size: 6.4pt)
+#set table(stroke: none, inset: (x: 3pt, y: 1.9pt))
+#show table: set text(size: 6.8pt)
 #show table: set par(justify: false)
 #show bibliography: set text(size: 6.3pt)
 #show bibliography: set par(spacing: 0.35em, leading: 0.4em)
@@ -126,14 +126,12 @@ and capture test-set sampling noise only, not training noise.
 
 #figure(
   include "table1.typ",
-  caption: [Test accuracy (%) and the gap $Delta_"amb" - Delta_"clear"$ (points) against the
-  unpruned reference, after the 1-epoch fine-tune (_acc._, _gap_) and right after pruning, before it
-  (_acc._#sub[0], _gap_#sub[0]). Bold: 95% interval excludes 0. The 0% row is the reference: the
-  base model after the same extra epoch, which scores 78.5% / 96.8% (ResNet-18) and 82.9% / 97.9%
-  (DeiT-Tiny) on ambiguous / clear images, and, in the #sub[0] columns, the base model itself.
-  Chance is 10%.],
+  caption: [Test accuracy (%) after the 1-epoch fine-tune and right after pruning, before it, with
+  magnitude (_mag._) and random (_rand._) pruning. The 0% row is the reference: the base model after
+  the same extra epoch (left) and the base model itself (right). After the fine-tune the references
+  score 78.5 / 96.8 (ResNet-18) and 82.9 / 97.9 (DeiT-Tiny) on ambiguous / clear images. Chance is
+  10%.],
   placement: top,
-  scope: "parent",
 ) <tab-main>
 
 = Results
@@ -164,7 +162,7 @@ chance the curves turn down and the gap becomes negative, following the chance f
 #figure(
   image("fig2_gap.pdf", width: 100%),
   caption: [Gap between the drops on ambiguous and clear images against the overall drop, after
-  the 1-epoch fine-tune (the gaps right after pruning are in @tab-main). Each curve starts at the
+  the 1-epoch fine-tune (right after pruning, most models are at chance; @tab-main). Each curve starts at the
   unpruned reference $(0, 0)$ and passes through 30, 50, 70, 90 and 95% sparsity. Bars: 95%
   bootstrap intervals. Black: no gap (the null hypothesis). Dotted: $D^*$. Thin lines (added after
   seeing the results): the gap if both groups lost the same share of their accuracy above chance.],
@@ -184,21 +182,22 @@ not smaller, for DeiT-Tiny.
 
 #figure(
   table(
-    columns: (auto, 1.1fr, 2fr, auto),
+    columns: (auto, 1fr, auto, auto),
     align: (left, left, left, left),
     table.hline(),
-    table.header([], [Prediction], [Result (after fine-tune, at $D^*$)], [Verdict]),
+    table.header([], [Prediction], [Result], [Verdict]),
     table.hline(stroke: 0.5pt),
     [P1], [ResNet-18 ratio ≈ 2], [1.67 [1.38, 1.97]], [not supported],
     [P2], [DeiT-Tiny ratio ≈ 1.5], [1.90 [1.61, 2.21]], [not supported],
-    [P3], [random loses more, same sparsity], [+1.9 to +48.9 points, all intervals > 0], [supported],
-    [P4], [random: ratios nearer 1; ViT < CNN], [1.57 vs 1.67; 1.54 vs 1.90; ViT − CNN −0.03 [−0.32, 0.25]],
-      [supported \ (ViT--CNN tie)],
+    [P3], [Random pruning loses more], [+1.9 to +48.9 points], [supported],
+    [P4], [Random: ratios nearer 1], [1.57, 1.54 vs 1.67, 1.90], [supported],
     table.hline(),
   ),
-  caption: [The four predictions, written before the experiments (ratios: $Delta_"amb" slash
-  Delta_"clear"$ under magnitude pruning for P1--P2; random vs magnitude for P4), with 95%
-  intervals.],
+  caption: [The four predictions, written before the experiments. P1--P2: ratio
+  $Delta_"amb" slash Delta_"clear"$ under magnitude pruning at $D^*$ after the fine-tune, with 95%
+  intervals. P3: extra overall drop of random over magnitude pruning at the same sparsity (every
+  interval above 0). P4: ResNet-18 and DeiT-Tiny ratios, random vs magnitude; P4 also predicted
+  the ViT's ratio below the CNN's, a tie (difference −0.03 [−0.32, 0.25]).],
 ) <tab-pred>
 
 *Robustness.* Ambiguous images cluster in a few classes: deer and cats make up 42% of them.
