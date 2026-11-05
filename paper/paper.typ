@@ -2,7 +2,7 @@
 // Build (from the repo root): .venv/bin/python paper/make_table.py && .venv/bin/python -c "import typst; typst.compile('paper/paper.typ', output='paper/paper.pdf', root='.')"
 // Numbers come from results/summary.json and results/drops.csv (notebook 03).
 
-#let author = "Author Name"  // replace with your name
+#let author = "Eli Ohayon"
 #let affiliation = "Independent research project"
 
 #set document(title: "Do Pruned Vision Transformers Also Forget What Humans Find Hard?", author: author)

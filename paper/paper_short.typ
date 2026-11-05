@@ -1,9 +1,9 @@
 // Two-page version of paper.typ: same results and numbers; Figure 1 is described in the text and
 // Figure 2's right panel is folded into the table (table1_short.typ, from make_table.py).
-// Build (from the repo root): .venv/bin/python paper/make_table.py && .venv/bin/python paper/v2/make_tables.py && .venv/bin/python -c "import typst; typst.compile('paper/paper_short.typ', output='paper/paper_short.pdf', root='.')"
-// The compact references (v2/refs_short.bib) are written by paper/v2/make_tables.py from refs.bib.
+// Build (from the repo root): .venv/bin/python paper/make_table.py && .venv/bin/python -c "import typst; typst.compile('paper/paper_short.typ', output='paper/paper_short.pdf', root='.')"
+// refs_short.bib is a compact copy of refs.bib (shorter author lists and venues).
 
-#let author = "Author Name"  // replace with your name
+#let author = "Eli Ohayon"
 #let affiliation = "Independent research project"
 
 #set document(title: "Do Pruned Vision Transformers Also Forget What Humans Find Hard?", author: author)
@@ -241,4 +241,4 @@ definition, specifications and predictions were decided by the author (with an A
 experiments, wrote the analysis rules marked in `03_test.ipynb` before the test evaluation, and
 drafted this paper.
 
-#columns(2, gutter: 0.8em, bibliography("v2/refs_short.bib", style: "ieee", title: "References"))
+#columns(2, gutter: 0.8em, bibliography("refs_short.bib", style: "ieee", title: "References"))
